@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { StyledToDoForm } from "./todoform.styled";
 import { ToDoListContext } from "../../store/todo";
 
@@ -21,8 +21,6 @@ function ToDoForm() {
     const enteredTask = taskInputRef.current.value;
 
     const time = new Date();
-    console.log(time);
-    
 
     const taskData = {
       user: userName,

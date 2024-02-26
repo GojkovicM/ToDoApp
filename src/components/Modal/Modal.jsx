@@ -4,7 +4,6 @@ import { ToDoListContext } from "../../store/todo";
 import check from "../../assets/checked-modal.svg";
 import uncheck from "../../assets/uncheck.svg";
 
-
 function Modal() {
   const {
     modalTaskData,
@@ -20,8 +19,6 @@ function Modal() {
   if (typeof modalTaskData.description === "string") {
     modalTaskData.description = JSON.parse(modalTaskData.description);
   }
-
-  console.log(modalTaskData.time.slice(11, 19));
 
   return (
     <StyledModal>
@@ -67,8 +64,11 @@ function Modal() {
             </ul>
           </div>
           <div className="status">
-            <p>Status: {modalTaskData.done ? <span>Done</span> :  <span>Active</span> }</p>
-            
+            <p>
+              Status:{" "}
+              {modalTaskData.done ? <span>Done</span> : <span>Active</span>}
+            </p>
+
             {modalTaskData.description.some((item) => item.status === false) ? (
               ""
             ) : modalTaskData.done ? (

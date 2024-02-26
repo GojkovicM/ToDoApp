@@ -83,4 +83,8 @@ export const StyledToDoForm = styled.div`
   li p {
     padding-left: 1rem;
   }
+
+  li:hover{
+    background-color: grey;
+  }
 `;

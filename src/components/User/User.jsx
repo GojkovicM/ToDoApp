@@ -7,11 +7,22 @@ function User() {
 
   const { handleUser } = useContext(ToDoListContext);
 
+  const userUppercase = () => {
+    const userCapital =
+      userInputRef.current.value.charAt(0).toUpperCase() +
+      userInputRef.current.value.slice(1);
+
+    handleUser(userCapital);
+
+    if (userCapital) {
+      localStorage.setItem("user", userCapital);
+    }
+  };
   return (
     <StyledUser>
       <label htmlFor="user">User:</label>
       <input type="text" id="user" ref={userInputRef} required />
-      <button onClick={() => handleUser(userInputRef.current.value)}>
+      <button onClick={() => userUppercase(userInputRef.current.value)}>
         Submit
       </button>
     </StyledUser>

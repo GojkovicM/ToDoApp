@@ -26,7 +26,6 @@ const ToDoListHandler = ({ children }) => {
   const [taskItems, setTaskItems] = useState([]);
   const [modalData, setModalData] = useState();
   const [toggleModal, setToggleModal] = useState(false);
-  
 
   const postTask = (data) => {
     fetch("http://localhost:5000/tasks", {
@@ -82,11 +81,14 @@ const ToDoListHandler = ({ children }) => {
   };
 
   const handleUser = (value) => {
-    setUser(value.charAt(0).toUpperCase() + value.slice(1));
+    setUser(value);
+    if (localStorage.getItem("user") !== null) {
+      localStorage.clear("user");
+    }
   };
 
   const handleTaskItems = (item) => {
-    if (item !== "") {
+    if (item) {
       const newItem = { name: item, status: false };
       setTaskItems((prevItems) => [...prevItems, newItem]);
     }
@@ -125,8 +127,10 @@ const ToDoListHandler = ({ children }) => {
   };
 
   useEffect(() => {
-    if (user !== "") {
+    if (user) {
       getTask();
+    } else {
+      setUser(localStorage.getItem("user"));
     }
   }, [user]);
 

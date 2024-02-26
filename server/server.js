@@ -2,8 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 
-const app = express();                                                   //We create an instance of the Express application which will be used to define routes and start the server.
-const PORT = process.env.PORT || 5000;                                   //We define a port number for the server to listen on
+const app = express();                                                   
+const PORT = process.env.PORT || 5000;                                   
    
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
@@ -13,12 +13,12 @@ app.listen(PORT, () => {
 
 // Middleware
 
-app.use(bodyParser.json());                                                  //We use the bodyParser.json() middleware to parse incoming JSON requests
+app.use(bodyParser.json());                                             
 
 // Enable CORS
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');      //  your frontend URL
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');      //when a cross-origin request is made but the server doesn't return the required headers in the response
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   next();
@@ -33,7 +33,7 @@ const db = new sqlite3.Database('./db/todo.db', (err) => {                  //We
   } else {
     console.log('Connected to the SQLite database.');
 
-    // Create tasks table if it doesn't exist
+    
                                                                         
     db.run(`CREATE TABLE IF NOT EXISTS tasks (                          
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,8 +55,8 @@ const db = new sqlite3.Database('./db/todo.db', (err) => {                  //We
 
 //Routes
 
-app.post('/tasks', (req, res) => {                                                                              //This route handles HTTP POST requests to the /tasks endpoint. When a POST request is received, the callback function is executed.
-    const { user, taskName, description, time, done } = req.body;                                                           //Extracts taskname, description, and done fields from the request body using object destructuring.
+app.post('/tasks', (req, res) => {                                                                                           //This route handles HTTP POST requests to the /tasks endpoint. When a POST request is received, the callback function is executed.
+    const { user, taskName, description, time, done } = req.body;                                                                //Extracts taskname, description, and done fields from the request body using object destructuring.
     if (!taskName || !description || !Array.isArray(description)) {                                                                            //Checks if taskname and description are provided in the request body. If not, it returns a 400 status response with an error message.   
       return res.status(400).json({ error: 'Taskname and description are required' });
     }
@@ -64,9 +64,9 @@ app.post('/tasks', (req, res) => {                                              
     const descriptionsString = JSON.stringify(description)
 
     db.run('INSERT INTO tasks (user, taskName, description, time, done) VALUES (?, ?, ?, ?, ?)', [user, taskName, descriptionsString, time, done || false], function(err) {            //Executes an SQL INSERT statement to insert a new row into the tasks table with the provided taskname, description, and done values.
-        if (err) {                                                                                                                                 //done || false ensures that if done is not provided in the request body, it defaults to false.
-          console.error('Error creating task:', err.message);                                                                                       //The db.run() method is used to execute the SQL query
-          return res.status(500).json({ error: 'Internal Server Error' });                                                                          //Handles any errors that occur during the database operation.
+        if (err) {                                                                                                                                                                     //done || false ensures that if done is not provided in the request body, it defaults to false.
+          console.error('Error creating task:', err.message);                                                                                                                          //The db.run() method is used to execute the SQL query
+          return res.status(500).json({ error: 'Internal Server Error' });                                                                                                              //Handles any errors that occur during the database operation.
         }
         console.log('New task created with id:', this.lastID);
         res.status(201).json({ id: this.lastID, user, taskName, description: JSON.parse(descriptionsString), time, done });                                                                      //If the task is successfully created, it logs the ID of the newly created task and sends a 201 status response with the details of the created task (including its ID) in JSON format.
@@ -74,7 +74,7 @@ app.post('/tasks', (req, res) => {                                              
     });
 
 
-    // GET /tasks - Retrieve all tasks
+    // GET /tasks 
 
   app.get('/tasks', (req, res) => {                                                                                   //This route handles HTTP GET requests to the /tasks endpoint.
     db.all('SELECT * FROM tasks', (err, rows) => {                                                                   //The db.all() method is used to execute the SQL query and retrieve all rows as an array of objects.
@@ -87,7 +87,7 @@ app.post('/tasks', (req, res) => {                                              
   });
 
 
-  // GET /tasks/:id - Retrieve a specific task by ID
+  // GET /tasks/:id 
 
 app.get('/tasks/:id', (req, res) => {                                                                                   //Extracts the task ID from the request parameters (req.params.id).
     const { id } = req.params;                                                                                          //Executes an SQL query to retrieve the task with the specified ID from the tasks table.
@@ -103,12 +103,13 @@ app.get('/tasks/:id', (req, res) => {                                           
     });
   });
 
-  // PUT /tasks/:id - Update a specific task
+  // PUT /tasks/:id 
 
   app.put('/tasks/:id', (req, res) => {
     const { id } = req.params;
     const { taskName, description, done } = req.body;
-    const descriptionString = JSON.stringify(description); // Stringify the description object
+    const descriptionString = JSON.stringify(description);       
+    
     db.run('UPDATE tasks SET taskName = ?, description = ?, done = ? WHERE id = ?', [taskName, descriptionString, done, id], function(err) {
       if (err) {
         console.error('Error updating task:', err.message);
@@ -122,7 +123,7 @@ app.get('/tasks/:id', (req, res) => {                                           
     });
   });
 
-  // DELETE /tasks/:id - Delete a specific task
+  // DELETE /tasks/:id 
 
 app.delete('/tasks/:id', (req, res) => {                                                                                                        //Extracts the task ID from the request parameters (req.params.id).
     const { id } = req.params;                                                                                                                  //Executes an SQL query to delete the task with the specified ID from the tasks table.
